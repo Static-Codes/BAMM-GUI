@@ -15,6 +15,8 @@ latest release. The paths below therefore refer to the repository root only.
 
 ## [Unreleased]
 
+- N/A
+
 ## [1.1.0.0]
 
 ### Removed
