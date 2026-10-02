@@ -64,7 +64,6 @@
         return response.json();
       })
       .then(data => {
-        // console.log(data);
         localUserScripts = data["Items"];
         console.log(localUserScripts);
       })
@@ -235,24 +234,6 @@
             </a>
           </li>
 
-          <!-- <li>
-            <a id="loadScript" href="#load" title="View Existing Script">
-              <svg aria-hidden="true" id="upload" viewBox="0 0 24 24">
-                <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" />
-              </svg>
-              <span>Load Existing Script</span>
-            </a>
-          </li>
-
-          <li>
-            <a id="deleteScript" href="#delete" title="Delete Existing Script">
-              <svg id="deleteSVG" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
-              </svg>
-              <span>Delete Existing Script</span>
-            </a>
-          </li> -->
-
           <li>
             <a href="#export" title="Export Current Script">
               <svg id="export" viewBox="0 0 24 24" aria-hidden="true">
@@ -267,15 +248,6 @@
             <h3>Settings</h3>
           </li>
 
-          <!-- <li>
-            <a href="#" id="restart-gui" title="Restart GUI">
-              <svg id="restart" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-              </svg>
-              <span>Restart GUI</span>
-            </a>
-          </li> -->
-          
           <li>
             <a href="#terminate" id="terminate-gui" title="Terminate GUI">
               <svg id="terminate" viewBox="0 0 24 24" aria-hidden="true">
@@ -401,14 +373,16 @@
       });
 
       function createAlert(alertType, message) {
+        let notification;
         if (alertType == "info"){
-          var notification = notyf.success(message);
+          notification = notyf.success(message);
         } else { 
-          var notification = notyf.error(message);
+          notification = notyf.error(message);
         }
         return notification;
       }
     </script>
+    <script src="scripts/version.js"></script>
     <script src="scripts/sidebar.js"></script>
     <script src="scripts/create/commands.js"></script>
     <script src="scripts/create/create_script.js"></script>
@@ -419,7 +393,7 @@
     <script>
       let currentlySelectedItem = null;
 
-      var commandSelect = document.querySelector('#command-select');
+      const commandSelectBox = document.querySelector('#command-select');
 
       const commandItems = document.querySelectorAll('#command-list li');
 
@@ -438,7 +412,7 @@
       });
       
       
-      var selectedOption = commandSelect.children[0];
+      var selectedOption = commandSelectBox.children[0];
 
       if (selectedOption == null && commandItems.length != 0){
         createAlert('error', "A fatal error has occured, please click \"Restart GUI\", or restart BAMM.");
@@ -448,7 +422,7 @@
       try {
         selectedOption.setAttribute("selected", "");
 
-        commandSelect.onchange = function(e) {
+        commandSelectBox.onchange = function(e) {
             var newSelectedOption = this.querySelector(`option[value="${e.target.value}"]`);
             if (selectedOption) {
                 selectedOption.removeAttribute("selected");
@@ -515,10 +489,10 @@
         }
         
         
-        var filename = prompt("Please enter your desired filename, it must end with .bamc");
+        let filename = prompt("Please enter your desired filename, it must end with .bamc");
 
         while (filename == null || !filename.endsWith(".bamc")){
-          fileName = prompt("Please enter your desired filename, it must end with .bamc");
+          filename = prompt("Please enter your desired filename, it must end with .bamc");
         }
         
         var commandString = Object.values(commandArray).join('\n');
@@ -632,7 +606,7 @@
           }
 
           var statusMessage = isLatest ? "Yes" : "No (UPDATE REQUIRED)";
-          var message = `BAMM Version: ${version}<br/>Is Latest: ${statusMessage}`;
+          var message = `GUI Version: ${GUI_VERSION}<br/>BAMM Version: ${version}<br/>Is Latest: ${statusMessage}`;
 
           createAlert("info", message);
         })
