@@ -63,29 +63,54 @@ latest release. The paths below therefore refer to the repository root only.
 
 ### Fixed
 
+- Fixed incorrect usage of `?debug=true` parameter.
+
+- Fixed an ordering bug in `scripts/create/create_script.js`, caused by an inverted condition.
+  
+  ### Correct command order
+  | Command name | Command order | Required?                               |
+  | ---          | ---           | ---                                     |
+  | Features     | First if used | No, these are additional features.      |
+  | Browser      | After features, or first if no features are used. | Yes |
+  | Visit        | After the Browser command is defined.             | Yes |       
+  | All other commands | After the visit command is defined.         | Yes, unless your needs are simplying visiting a url. |
+
+  Features are now correctly a part of the header on a BAMC script.
+
+  `recalculateState` now derives all three flags from the script unconditionally
+  rather than bailing out early when no browser command is present, and
+  `isCommandDisabled` reads the module-level state instead of taking
+  `browserExists` as an argument.
+
 - Added the missing `lang="en"` attribute and a `<title>` element to
   `inactive.html`, along with the matching `<meta charset>` and viewport
   declarations. This resolves the `html-has-lang` and `document-title`
   accessibility audits for the "GUI is not currently active" page.
+
 - Removed the duplicate `color` declaration in the `.action-button` rule of
   `styles/create_script.css`. The rule declared `color: var(--white)` and then
   overrode it with `color: invert(var(--page-header-txtColor))`; the redundant
   first declaration is gone and the theme-aware declaration is now the only one,
   so rendering is unchanged.
+
 - Fixed an undeclared-variable bug in the export handler in `index.html`. The
   filename re-prompt assigned to `fileName` while the surrounding code read
   `filename`, so the validation loop could never exit and a global `fileName`
   was created in its place. Both now use a single `let filename` binding.
+
 - Declared `notification` once with `let` in `createAlert` instead of
   redeclaring `var notification` in each branch of `index.html`.
+
 - Removed commented-out code from `index.html`: the `console.log(data)` debug
   line in the script fetch, and the disabled "Load Existing Script", "Delete
   Existing Script", and "Restart GUI" sidebar entries. No live markup or
   behaviour referenced those entries.
+
 - Modernised `scripts/create/create_script.js` to ES2015: every `var`
   declaration is now `let`. No declaration was left behind, no binding was
   moved between scopes, and the two `let child` declarations in
   `removeSelectedCommand` sit in disjoint blocks, so behaviour is unchanged.
+
 - Fixed the global-scope collision that the above change introduced.
   `index.html` declared a second `var commandSelect` in an inline script that
   runs after `create_script.js`. A global `var` that conflicts with an existing
@@ -93,12 +118,15 @@ latest release. The paths below therefore refer to the repository root only.
   that whole script block from running and left the "Create New Script" button
   dead. The inline script's own reference is now `commandSelectBox`, leaving
   `commandSelect` to `create_script.js`.
+
 - Fixed an implicit global in `loadCurrentScriptCommands`: the Otter-only
   branch iterated with `for (cmd of commandItems)`, leaking `cmd` onto the
   global object. It is now `for (let cmd of ...)`.
+
 - `getIndexOfSelectedCommand` no longer swallows exceptions silently. Its
   `catch` block now logs the error before returning `-1`, matching the handling
   in `getData`.
+
 - Added the missing `Add-JS-Code` entry to `commandCollection`. The command was
   referenced in seven places in `create_script.js` but was never declared, so
   `advanceAfterAddingCommand` set `commandSelect.value` to a value no `<option>`
@@ -108,11 +136,13 @@ latest release. The paths below therefore refer to the repository root only.
   was dead as a result. The entry also carries `isCodeBlock: true`, which is
   read in two places and was defined on no command, so no code `<textarea>`
   rendered and zero-length argument lists were always skipped.
+
 - Fixed `Feature: use-mobile-user-agent` throwing on selection. It declared
   `commandArgs: null` and `renderArguments` calls `Object.keys` on the value
   directly. It is now `{}`, matching the other no-argument features' effect:
   `buildFeatureCommandText` omits the arguments key entirely, so the emitted
   command is `{"feature":"\"use-mobile-user-agent\""}`.
+
 - Fixed the duplicate-feature and duplicate-proxy checks never firing.
   `isDuplicateFeature` and `isOtherProxyFeaturePresent` compared
   `commandObject.feature` against the bare feature name, but

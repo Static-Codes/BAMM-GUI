@@ -22,6 +22,7 @@ let scriptIsValidated = false;
 let jsMode = false;
 let featuresAllowed = false;
 let visitAdded = false;
+let browserExists = false;
 
 // List of all proxy-related feature commands
 const proxyFeatures = [
@@ -174,35 +175,34 @@ function loadCurrentScriptCommands() {
 }
 
 function recalculateState() {
-  featuresAllowed = false;
-  visitAdded = false;
-
   const scriptCommands = Object.values(commands);
-  const browserExists = scriptCommands.some((cmd) =>
-    cmd.includes('"browser":'),
-  );
 
-  if (!browserExists) {
-    return;
-  }
-
+  browserExists = scriptCommands.some((cmd) => cmd.includes('"browser":'));
   visitAdded = scriptCommands.some((cmd) => cmd.includes('"visit":'));
 
-  featuresAllowed = browserExists && !visitAdded;
+  // Features are a prefix of the script, so they are only offered up front,
+  // before a browser or visit command has been added.
+  featuresAllowed = !browserExists && !visitAdded;
 }
 
-function isCommandDisabled(command, browserExists) {
+function isCommandDisabled(command) {
   const commandName = command.commandName;
+
   if (commandName === "Browser") {
     return browserExists;
   }
+
   if (commandName === "Visit") {
-    return !featuresAllowed || visitAdded;
+    return !browserExists || visitAdded;
   }
+
   if (commandName.includes("Feature:")) {
     return !featuresAllowed;
   }
-  return visitAdded;
+
+  // The action commands only unlock once the script has both a browser and a
+  // visit command.
+  return !browserExists || !visitAdded;
 }
 
 function populateCommandSelect() {
@@ -210,9 +210,6 @@ function populateCommandSelect() {
 
   recalculateState();
 
-  const browserExists = Object.values(commands).some((cmd) =>
-    cmd.includes('"browser":'),
-  );
   let selectedCommandName = commandSelect.value;
   let hasSetInitialSelection = false;
 
@@ -220,7 +217,7 @@ function populateCommandSelect() {
     let option = document.createElement("option");
     option.value = command.commandName;
     option.textContent = command.commandName;
-    option.disabled = isCommandDisabled(command, browserExists);
+    option.disabled = isCommandDisabled(command);
 
     if (!option.disabled && !hasSetInitialSelection) {
       selectedCommandName = command.commandName;
