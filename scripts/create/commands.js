@@ -235,6 +235,18 @@ const commandCollection = [
   },
 
   {
+    commandName: "Add-JS-Code",
+    commandArgs: {
+      "javascript-code": [],
+    },
+    commandDescription:
+      "Adds a line of JavaScript to the surrounding JavaScript block. Only valid between Start-Javascript and End-Javascript.",
+    disabledOnLoad: true,
+    isCodeBlock: true,
+    placeholder: "document.title",
+  },
+
+  {
     commandName: "End-Javascript",
     commandArgs: {},
     commandDescription:
@@ -302,7 +314,7 @@ const commandCollection = [
 
   {
     commandName: "Feature: use-mobile-user-agent",
-    commandArgs: null,
+    commandArgs: {},
     commandDescription:
       'Feature: Instructs the compiler to return a mobile user agent. This only works when browser is set to "safari"',
     disabledOnLoad: true,

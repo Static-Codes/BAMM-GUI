@@ -241,12 +241,11 @@
   border: none;
   border-radius: var(--border-radius);
   background-color: var(--blue);
-  color: var(--white);
+  color: invert(var(--page-header-txtColor));
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.2s;
-  color: invert(var(--page-header-txtColor));
 }
 
 .remove-command-btn {
