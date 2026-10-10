@@ -14,8 +14,8 @@
 
     <!-- GUI Port Management -->
     <script>
-      var guiPort = "8008";
-      var href = window.location.href;
+      let guiPort = "8008";
+      let href = window.location.href;
 
       function setPort() {
         if (!href || !href.includes("?port=")){
@@ -23,10 +23,10 @@
           return;
         }
           
-        var regexPattern = "\\bport=(\\d{1,5})";
-        var regex = new RegExp(regexPattern);
+        let regexPattern = "\\bport=(\\d{1,5})";
+        let regex = new RegExp(regexPattern);
           
-        var matches = href.match(regex);
+        let matches = href.match(regex);
           
         if (!matches && !matches[1]) {
           console.log("Port parameter contains an invalid value.\nUsing default port:", guiPort);
@@ -40,14 +40,14 @@
     
     <!-- Retrieving Local UserScripts -->
     <script>
-      var baseServerURL = `http://127.0.0.1:${guiPort}`;
-      var createScriptURL = `${baseServerURL}/create`
-      var loadScriptsURL = `${baseServerURL}/load`
-      var validateScriptURL = `${baseServerURL}/validate`
-      var exportScriptURL = `${baseServerURL}/export`
-      var terminateGUIURL = `${baseServerURL}/terminate`
-      var versionViewURL = `${baseServerURL}/version`
-      var localUserScripts = null;
+      let baseServerURL = `http://127.0.0.1:${guiPort}`;
+      let createScriptURL = `${baseServerURL}/create`
+      let loadScriptsURL = `${baseServerURL}/load`
+      let validateScriptURL = `${baseServerURL}/validate`
+      let exportScriptURL = `${baseServerURL}/export`
+      let terminateGUIURL = `${baseServerURL}/terminate`
+      let versionViewURL = `${baseServerURL}/version`
+      let localUserScripts = null;
 
       fetch(
         loadScriptsURL, 
@@ -412,7 +412,7 @@
       });
       
       
-      var selectedOption = commandSelectBox.children[0];
+      let selectedOption = commandSelectBox.children[0];
 
       if (selectedOption == null && commandItems.length != 0){
         createAlert('error', "A fatal error has occured, please click \"Restart GUI\", or restart BAMM.");
@@ -423,7 +423,7 @@
         selectedOption.setAttribute("selected", "");
 
         commandSelectBox.onchange = function(e) {
-            var newSelectedOption = this.querySelector(`option[value="${e.target.value}"]`);
+            let newSelectedOption = this.querySelector(`option[value="${e.target.value}"]`);
             if (selectedOption) {
                 selectedOption.removeAttribute("selected");
             }
@@ -438,17 +438,17 @@
     }
 
       const createScriptBtn = document.querySelector("#resetScriptState");
-      var commandsAdded = document.querySelectorAll("#command-list li");
+      let commandsAdded = document.querySelectorAll("#command-list li");
       
-      var originalSection = null;
-      var currentSection = null;
+      let originalSection = null;
+      let currentSection = null;
       
 
       createScriptBtn.addEventListener("click", (e) => {
         clearCurrentScriptState(commandsAdded)
 
         if (currentSection && originalSection && currentSection.parentNode) {
-            var parentEl = currentSection.parentNode;
+            let parentEl = currentSection.parentNode;
             
             parentEl.replaceChild(originalSection, currentSection);
             currentSection = originalSection;
@@ -464,7 +464,7 @@
     
     <!-- Export Button Functionality -->
     <script>
-      var exportScriptButton = document.querySelector(
+      let exportScriptButton = document.querySelector(
         ".action-button.export-script-btn"
       );
 
@@ -474,7 +474,7 @@
       }
       exportScriptButton.addEventListener("click", (e) => {
         
-        var commandArray = getData();
+        let commandArray = getData();
         console.log(commandArray);
         if (commandArray == {} || commandArray == null)
         {
@@ -495,7 +495,7 @@
           filename = prompt("Please enter your desired filename, it must end with .bamc");
         }
         
-        var commandString = Object.values(commandArray).join('\n');
+        let commandString = Object.values(commandArray).join('\n');
 
         if (commandString == null || commandString == ""){
           createAlert('error',
@@ -509,10 +509,10 @@
         }
         console.log(commandString);
 
-        var encodedFilename = encodeURIComponent(filename);
-        var encodedContents = btoa(commandString);
+        let encodedFilename = encodeURIComponent(filename);
+        let encodedContents = btoa(commandString);
 
-        var url = `${exportScriptURL}?filename=${encodedFilename}&contents=${encodedContents}`
+        let url = `${exportScriptURL}?filename=${encodedFilename}&contents=${encodedContents}`
         
         fetch(
           url,
@@ -542,7 +542,7 @@
     
     <!-- Terminate GUI Button Functionality -->
     <script>
-      var terminateGUIButton = document.querySelector("#terminate-gui");
+      let terminateGUIButton = document.querySelector("#terminate-gui");
       if (terminateGUIButton == null){
         createAlert('error', "The terminate button was not found, please make a bug report, if you are reading this.");
         throw new Error("The terminate button was not found, please make a bug report, if you are reading this.");
@@ -572,7 +572,7 @@
 
     <!-- Version Info Button Functionality -->
     <script>
-      var viewVersionButton = document.querySelector("#viewVersion");
+      let viewVersionButton = document.querySelector("#viewVersion");
       
       if (viewVersionButton == null)
       {
@@ -595,8 +595,8 @@
           return response.json();
         })
         .then(data => {
-          var version = data.version;
-          var isLatest = data.is_latest;
+          let version = data.version;
+          let isLatest = data.is_latest;
           
           if (version === 'undefined' || isLatest === 'undefined')
           {
@@ -605,8 +605,8 @@
             throw new Error("Unable to show version info, please use the --version argument when opening BAMM.");
           }
 
-          var statusMessage = isLatest ? "Yes" : "No (UPDATE REQUIRED)";
-          var message = `GUI Version: ${GUI_VERSION}<br/>BAMM Version: ${version}<br/>Is Latest: ${statusMessage}`;
+          let statusMessage = isLatest ? "Yes" : "No (UPDATE REQUIRED)";
+          let message = `GUI Version: ${GUI_VERSION}<br/>BAMM Version: ${version}<br/>Is Latest: ${statusMessage}`;
 
           createAlert("info", message);
         })

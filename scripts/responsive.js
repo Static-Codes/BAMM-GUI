@@ -1,11 +1,11 @@
-var parent = document.querySelector("head");
+let parent = document.querySelector("head");
 
-var tabletChild = document.createElement("link");
+let tabletChild = document.createElement("link");
 tabletChild.href = "styles/responsive/tablet.css";
 tabletChild.rel = "stylesheet";
 tabletChild.id = "tablet-style";
 
-var widescreenChild = document.createElement("link");
+let widescreenChild = document.createElement("link");
 widescreenChild.href = "styles/responsive/widescreen.css";
 widescreenChild.rel = "stylesheet";
 widescreenChild.id = "widescreen-style";
@@ -17,15 +17,15 @@ function appendStyle(styleElement) {
 }
 
 function removeStyle(id) {
-  var styleElement = document.getElementById(id);
+  let styleElement = document.getElementById(id);
   if (styleElement) {
     styleElement.remove();
   }
 }
 
 function setResponsiveness() {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
+  let width = window.innerWidth;
+  let height = window.innerHeight;
 
   if (width >= 1600 && width < 1920 && height >= 1050) {
     removeStyle("tablet-style");
